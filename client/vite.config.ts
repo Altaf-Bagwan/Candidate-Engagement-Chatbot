@@ -15,9 +15,11 @@ export default defineConfig({
     },
   },
   server: {
+    host: "0.0.0.0", // ⭐ NEW: Allow access from outside container
+    port: 5173, // ⭐ NEW: Explicitly set port
     proxy: {
       "/api": {
-        target: "http://localhost:3001",
+        target: "http://backend:3001", // ⭐ CHANGED: Use container name
         changeOrigin: true,
       },
     },

@@ -1,0 +1,52 @@
+version: "3.8"
+
+# 🔵 Define services (containers)
+services:
+  # Backend container
+  backend:
+    # Build from server/Dockerfile
+    build: ./server
+
+    # Give it a name
+    container_name: chatbot-backend
+
+    # Port mapping (your-computer:container)
+    ports:
+      - "3001:3001"
+
+    # Environment variables (like .env file)
+    environment:
+      - PORT=3001
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - NODE_ENV=development
+
+    # Restart if it crashes
+    restart: unless-stopped
+
+    # Connect to network (so containers can talk)
+    networks:
+      - chatbot-network
+
+  # Frontend container
+  frontend:
+    # Build from client/Dockerfile
+    build: ./client
+
+    container_name: chatbot-frontend
+
+    ports:
+      - "5173:5173"
+
+    # Wait for backend to start first
+    depends_on:
+      - backend
+
+    restart: unless-stopped
+
+    networks:
+      - chatbot-network
+
+# 🔵 Define network (virtual network for containers)
+networks:
+  chatbot-network:
+    driver: bridge
